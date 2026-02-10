@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dora's Adventure Auth - Stop Swiper!</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="stars-bg" id="starsBg"></div>
+    <!-- Sparkle trail canvas -->
+    <canvas id="sparkleCanvas"></canvas>
+
+    <div class="app-container">
+
+        <!-- ==================== REGISTRATION PAGE ==================== -->
+        <div id="registerPage" class="page active">
+            <div class="card">
+                <div class="card-rainbow-top"></div>
+                <div class="card-header">
+                    <div class="logo-wrapper" id="regLogo"></div>
+                    <h1>Join Dora's Adventure!</h1>
+                    <p class="subtitle">Create your explorer profile &amp; learn to stop Swiper</p>
+                </div>
+
+                <form id="registerForm" onsubmit="return false;">
+                    <div class="form-group">
+                        <label>Explorer Name</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">&#129489;</span>
+                            <input type="text" id="regUsername" placeholder="What should we call you?" required autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Explorer Email</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">&#9993;</span>
+                            <input type="email" id="regEmail" placeholder="explorer@adventure.com" required autocomplete="off">
+                        </div>
+                    </div>
+                    <!-- BACKPACK ITEMS AUTH -->
+                    <div class="auth-section">
+                        <div class="auth-section-header">
+                            <div class="backpack-icon-small" id="regBackpackIcon"></div>
+                            <div>
+                                <label>Pick 3 Secret Items from Backpack <span class="badge">Your Key!</span></label>
+                                <p class="auth-hint">These items will help you stop Swiper later!</p>
+                            </div>
+                        </div>
+                        <div class="items-grid" id="regItemsGrid"></div>
+                        <div class="selected-items-bar">
+                            <span class="sel-label">Your items:</span>
+                            <div class="sel-slots" id="regSelectedSlots">
+                                <div class="sel-slot empty">?</div>
+                                <div class="sel-slot empty">?</div>
+                                <div class="sel-slot empty">?</div>
+                            </div>
+                            <button type="button" class="btn-clear" onclick="clearItems('reg')">Clear</button>
+                        </div>
+                    </div>
+
+                    <!-- SECRET CHANT -->
+                    <div class="auth-section chant-section">
+                        <label>Create Your Secret Chant <span class="badge">Magic Words!</span></label>
+                        <p class="auth-hint">Type the magic words you'll shout to stop Swiper!</p>
+                        <div class="chant-input-wrapper">
+                            <span class="chant-quote">&ldquo;</span>
+                            <input type="text" id="regChant" placeholder="Swiper, no swiping!" autocomplete="off" required>
+                            <span class="chant-quote">&rdquo;</span>
+                        </div>
+                        <p class="chant-note">You'll need to remember this exact phrase!</p>
+                    </div>
+
+                    <div id="regError" class="error-msg"></div>
+                    <button type="button" class="btn-primary" onclick="handleRegister()">
+                        <span>Start My Adventure!</span>
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" fill="currentColor"/></svg>
+                    </button>
+                </form>
+                <div class="card-footer">
+                    <p>Already an explorer? <a href="#" onclick="showPage('loginPage')">Sign In</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== LOGIN PAGE ==================== -->
+        <div id="loginPage" class="page">
+            <div class="card login-card" id="loginCard">
+                <div class="card-rainbow-top"></div>
+
+                <!-- MAP PROGRESS BAR -->
+                <div class="map-progress" id="mapProgress">
+                    <div class="map-track">
+                        <div class="map-dot completed" data-step="0"><span>&#127968;</span></div>
+                        <div class="map-line"><div class="map-line-fill" id="mapLineFill1"></div></div>
+                        <div class="map-dot" data-step="1" id="mapDot1"><span>&#127795;</span></div>
+                        <div class="map-line"><div class="map-line-fill" id="mapLineFill2"></div></div>
+                        <div class="map-dot" data-step="2" id="mapDot2"><span>&#127890;</span></div>
+                        <div class="map-line"><div class="map-line-fill" id="mapLineFill3"></div></div>
+                        <div class="map-dot" data-step="3" id="mapDot3"><span>&#128227;</span></div>
+                        <div class="map-line"><div class="map-line-fill" id="mapLineFill4"></div></div>
+                        <div class="map-dot" data-step="4" id="mapDot4"><span>&#11088;</span></div>
+                    </div>
+                    <div class="map-label" id="mapLabel">Start Here!</div>
+                </div>
+
+                <!-- DORA HELPER BUBBLE (floats at bottom of stages) -->
+                <div class="dora-helper" id="doraHelper">
+                    <div class="dora-helper-avatar" id="doraHelperAvatar"></div>
+                    <div class="dora-helper-bubble" id="doraHelperBubble">Can you help me stop Swiper?</div>
+                </div>
+
+                <!-- STAGE 0: Enter username -->
+                <div class="login-stage active" id="loginStage0">
+                    <div class="card-header">
+                        <div class="logo-wrapper" id="loginLogo"></div>
+                        <h1>Welcome Back, Explorer!</h1>
+                        <p class="subtitle">Ready to stop Swiper?</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Explorer Name</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">&#129489;</span>
+                            <input type="text" id="loginUsername" placeholder="Enter your explorer name" required autocomplete="off">
+                        </div>
+                    </div>
+                    <div id="loginError0" class="error-msg"></div>
+                    <button type="button" class="btn-primary btn-jungle" onclick="enterJungle()">
+                        <span>Enter the Jungle</span>
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" fill="currentColor"/></svg>
+                    </button>
+                    <div class="card-footer">
+                        <p>New explorer? <a href="#" onclick="showPage('registerPage')">Register Here</a></p>
+                    </div>
+                </div>
+
+                <!-- STAGE 1: Swiper appears! -->
+                <div class="login-stage" id="loginStage1">
+                    <div class="jungle-scene">
+                        <div class="jungle-bg">
+                            <div class="bush bush-1"></div>
+                            <div class="bush bush-2"></div>
+                            <div class="bush bush-3"></div>
+                            <div class="vine vine-1"></div>
+                            <div class="vine vine-2"></div>
+                            <div class="firefly" style="left:20%;top:30%;--delay:0s;--dur:3s"></div>
+                            <div class="firefly" style="left:70%;top:50%;--delay:1s;--dur:4s"></div>
+                            <div class="firefly" style="left:45%;top:20%;--delay:2s;--dur:3.5s"></div>
+                        </div>
+                        <div class="swiper-entrance" id="swiperEntrance">
+                            <div class="swiper-character" id="swiperChar"></div>
+                            <div class="swiper-speech" id="swiperSpeech">
+                                <p id="swiperSpeechText">You'll never get in! <em>*sneaky laugh*</em></p>
+                            </div>
+                        </div>
+                        <div class="alert-banner" id="alertBanner">
+                            <span class="alert-icon">&#9888;</span>
+                            <span>SWIPER ALERT! He's blocking your path!</span>
+                        </div>
+                        <button type="button" class="btn-primary btn-backpack pulse-btn" onclick="openBackpack()">
+                            <div class="btn-backpack-icon" id="btnBackpackIcon"></div>
+                            <span>Quick! Open Backpack!</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STAGE 2: Pick items from Backpack -->
+                <div class="login-stage" id="loginStage2">
+                    <div class="backpack-scene">
+                        <div class="backpack-open-anim" id="backpackOpen"></div>
+                        <h2 class="scene-title">Grab your 3 secret items!</h2>
+                        <p class="scene-hint">Pick the same items you chose during registration</p>
+                        <div class="items-grid login-items-grid" id="loginItemsGrid"></div>
+                        <div class="selected-items-bar">
+                            <span class="sel-label">Grabbed:</span>
+                            <div class="sel-slots" id="loginSelectedSlots">
+                                <div class="sel-slot empty">?</div>
+                                <div class="sel-slot empty">?</div>
+                                <div class="sel-slot empty">?</div>
+                            </div>
+                            <button type="button" class="btn-clear" onclick="clearItems('login')">Reset</button>
+                        </div>
+                        <div id="loginError2" class="error-msg"></div>
+                        <button type="button" class="btn-primary btn-chant-ready" onclick="showChantStage()" id="btnChantReady" disabled>
+                            <span>I've got my items!</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STAGE 3: Type the chant (with Swiper creep timer) -->
+                <div class="login-stage" id="loginStage3">
+                    <div class="chant-scene">
+                        <!-- Swiper creep bar -->
+                        <div class="creep-bar-wrapper">
+                            <div class="creep-label">Swiper is getting closer!</div>
+                            <div class="creep-bar">
+                                <div class="creep-bar-fill" id="creepBarFill"></div>
+                                <div class="creep-swiper-icon" id="creepSwiperIcon"></div>
+                            </div>
+                            <div class="creep-timer" id="creepTimer">15</div>
+                        </div>
+                        <div class="swiper-waiting" id="swiperWaiting"></div>
+                        <h2 class="scene-title shout-title">NOW SHOUT THE MAGIC WORDS!</h2>
+                        <p class="scene-hint">Type your secret chant to stop Swiper!</p>
+                        <div class="chant-input-wrapper chant-login-input">
+                            <span class="chant-quote mega">&ldquo;</span>
+                            <input type="text" id="loginChant" placeholder="Type your secret chant..." autocomplete="off">
+                            <span class="chant-quote mega">&rdquo;</span>
+                        </div>
+                        <div id="loginError3" class="error-msg"></div>
+                        <button type="button" class="btn-primary btn-stop-swiper" onclick="attemptStopSwiper()">
+                            <span>STOP SWIPER!</span>
+                            <span class="btn-shout">&#128227;</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STAGE: SUCCESS -->
+                <div class="login-stage" id="loginStageSuccess">
+                    <div class="result-scene success-scene">
+                        <div class="swiper-defeated" id="swiperDefeated"></div>
+                        <div class="oh-man-bubble">
+                            <span>Oh, maaaan!</span>
+                        </div>
+                        <h2 class="result-title success-title">You stopped Swiper!</h2>
+                        <p class="result-text">Great job, explorer! Swiper is running away!</p>
+                        <div class="celebration-stars" id="celebrationStars"></div>
+                    </div>
+                </div>
+
+                <!-- STAGE: FAILURE -->
+                <div class="login-stage" id="loginStageFail">
+                    <div class="result-scene fail-scene">
+                        <div class="swiper-wins" id="swiperWins"></div>
+                        <div class="swiper-laugh-bubble" id="swiperLaughBubble">
+                            <span>Ha ha ha! You can't stop me!</span>
+                        </div>
+                        <h2 class="result-title fail-title">Swiper swiped your access!</h2>
+                        <p class="result-text" id="failMsg">Wrong items or chant. Try again!</p>
+                        <div class="attempt-counter" id="attemptCounter"></div>
+                        <button type="button" class="btn-primary btn-retry" onclick="retryLogin()">
+                            <span>Try Again!</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== WELCOME PAGE ==================== -->
+        <div id="welcomePage" class="page">
+            <div class="card welcome-card">
+                <div class="card-rainbow-top"></div>
+                <div class="confetti-container" id="confettiContainer"></div>
+
+                <div class="welcome-header">
+                    <div class="welcome-characters" id="welcomeCharacters"></div>
+                    <h1 class="welcome-title">
+                        <span class="wave-text" id="welcomeMsg"></span>
+                    </h1>
+                    <p class="welcome-subtitle" id="welcomeSubtitle">You stopped Swiper and entered the adventure!</p>
+                </div>
+
+                <div class="we-did-it-banner" id="weDidItBanner">
+                    <span>&#127881;</span> We did it! We did it! Lo hicimos! <span>&#127881;</span>
+                </div>
+
+                <div class="user-info-card">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <div class="user-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Explorer Name</span>
+                            <span class="detail-value" id="welcomeUsername"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Explorer Email</span>
+                            <span class="detail-value" id="welcomeEmail"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Secret Items</span>
+                            <div class="detail-value items-preview" id="welcomeItems"></div>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Secret Chant</span>
+                            <span class="detail-value chant-preview" id="welcomeChant"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="adventure-quote">
+                    <p id="adventureQuote"></p>
+                </div>
+
+                <button type="button" class="btn-primary btn-logout" onclick="handleLogout()">
+                    <span>End Adventure (Logout)</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="characters.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
